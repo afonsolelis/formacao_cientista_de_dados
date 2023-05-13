@@ -1,0 +1,54 @@
+---
+Formação Cientista de Dados II - Técnicas Locais
+Prof. Fernando Amaral
+---
+
+```{r}
+#pacotes
+#install.packages("iml")
+#install.packages("partykit")
+#install.packages("patchwork")
+#install.packages("randomForest")
+library(iml)
+library(randomForest)
+library(partykit)
+library(patchwork)
+```
+
+```{r}
+#carrega arquivo
+carros = read.csv('carros.csv', sep=";", encoding = "UTF-8")
+head(carros)
+```
+
+
+```{r}
+#criamos modelo randomForest
+modelo = randomForest(HP ~ ., data = carros, ntree = 100)
+#previsor, modelo, dados, e previsor
+previsor = Predictor$new(modelo,  carros[,-11]   , y = carros$HP  )
+```
+
+
+```{r}
+carros[10, ]
+previsao = predict(modelo, carros[10, ])
+previsao
+```
+
+
+```{r}
+explicacao = LocalModel$new(previsor, x.interest = carros[10,1:10 ])
+explicacao$results
+#actual é previsão do modelo original
+#local é do modelo criado para explicação
+plot(explicacao)
+```
+
+
+```{r}
+#shapley
+shapley = Shapley$new(previsor, x.interest = carros[1,1:10 ])
+shapley$plot()
+
+```

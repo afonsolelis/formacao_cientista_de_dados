@@ -1,0 +1,104 @@
+---
+Formação Cientista de Dados II - Prof. Fernando Amaral
+Classificação Multi-Label
+---
+
+```{r}
+#install.packages("mlr")
+#install.packages("caret", dependencies=T)
+library(mlr)
+library(caret)
+```
+
+
+```{r}
+musica = read.csv("Musica.csv")
+head(musica)
+```
+
+
+```{r}
+#transformamos as colunas 1 a 6 de binários para lógico
+musica[, 1:6] = sapply(musica[, 1:6], as.logical)
+musica
+```
+
+
+```{r}
+#separamos os labels das classes
+rotulos = colnames(musica)[1:6]
+rotulos
+```
+
+
+```{r}
+#criamos a tarefa 
+tarefa = makeMultilabelTask(data = musica, target = rotulos)
+#cria um objeto de aprendizado
+aprendizado = makeLearner("classif.rpart")
+```
+
+
+```{r}
+#primeiro binary relevance, problema de transformação
+tipoclass = makeMultilabelBinaryRelevanceWrapper(aprendizado)
+
+```
+
+
+```{r}
+#cria particao de dados
+particao = createDataPartition(1:592,p=.7)
+```
+
+
+```{r}
+#descarrega caret para não ter conflito com método train
+detach("package:caret", unload=TRUE)
+```
+
+
+```{r}
+#treina o modelo
+modelo = train(tipoclass, tarefa, subset = particao$Resample1)
+modelo
+```
+
+
+```{r}
+#fazemos a previsao
+predicao = predict(modelo, task = tarefa, subset = subset(seq(1:592),!seq(1:592) %in% particao$Resample1))
+predicao
+```
+
+
+```{r}
+#avaliar a performance e anotar o resultado
+performance(predicao, measures = list(multilabel.hamloss))
+```
+
+
+```{r}
+#testando outro tipo de transformação
+#classifier chains - substituo tipoclass
+tipoclass = makeMultilabelClassifierChainsWrapper(aprendizado)
+```
+
+
+```{r}
+#treina o modelo
+modelo = train(tipoclass, tarefa, subset = particao$Resample1)
+```
+
+
+```{r}
+#fazemos a previsao
+predicao = predict(modelo, task = tarefa, subset = subset(seq(1:592),!seq(1:592) %in% particao$Resample1))
+```
+
+
+```{r}
+#avaliar a performance e anotar o resultado
+performance(predicao, measures = list(multilabel.hamloss))
+```
+

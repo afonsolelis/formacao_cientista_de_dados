@@ -1,0 +1,104 @@
+# configura
+aws configure
+#echo %userprofile%
+cd %userprofile%
+cd .aws
+dir
+type credentials
+
+#criar diretório
+cd %userprofile%
+mkdir testaws
+cd testaws
+
+#Listar buckets
+aws s3 ls
+
+#Criar um bucket
+aws s3 mb s3://mynewnewbucket2345 --region us-east-1
+
+#criar pasta e arquivos dentro
+mkdir arquivos
+cd arquivos
+type nul > "aquivo1.txt"
+type nul > "aquivo2.txt"
+dir
+#copiar arquivo para raiz do bucket
+aws s3 cp aquivo1.txt s3://mynewbucket2345a 
+#verificamos que o arquivo está la
+aws s3 ls s3://mynewbucket2345a 
+
+#copiar toda a pasta aquivos vão para a raiz
+cd ..
+aws s3 cp arquivos s3://mynewbucket2345a --recursive
+aws s3 ls s3://mynewbucket2345a 
+
+#copiar toda a pasta para uma nova pasta, que pode ter qualquer nome
+aws s3 cp arquivos s3://mynewbucket2345a/newfolder --recursive
+aws s3 ls s3://mynewbucket2345a
+
+#vamos criar uma nova pasta e mover ela
+#mover é diferente de copiar
+mkdir arquivos2
+cd arquivos2
+type nul > "aquivo3.txt"
+type nul > "aquivo4.txt"
+dir
+cd ..
+dir
+aws s3 mv arquivos2 s3://mynewbucket2345a/arquivos2 --recursive
+aws s3 ls s3://mynewbucket2345a/arquivos2/
+
+#mover do bucket para a pasta local
+#neste nível não tem o arquivo
+dir
+aws s3 mv s3://mynewbucket2345a/arquivos2/aquivo3.txt ./
+
+#exemplo de sincronização
+mkdir sync
+cd sync
+mkdir file1
+mkdir file2
+cd file1
+type nul > "filea.txt"
+type nul > "fileb.txt"
+cd ..
+cd file2
+type nul > "filec.txt"
+type nul > "filed.txt"
+cd ..
+#deve estar na raiz de sync
+#criamos um bucket para este teste
+aws s3 mb s3://testsync12345 
+#sincronizamos local com remoto, faz diferença!
+aws s3 sync . s3://testsync12345/
+aws s3 ls s3://testsync12345/
+aws s3 ls s3://testsync12345/file1/
+ 
+#agora vamos criar uma pasta pelo console em  s3://testsync12345/file1/
+#chamada novapasta e arquivo chamado fileX.txt dentro
+#esperamos que seja criada pasta  sync/file1/novapasta/arquivo...
+#importante notar que agora vamos sincronizar ao contrários
+aws s3 sync  s3://testsync12345/ .
+cd file1\novapasta
+
+#Excluir bucket deve estar vazio
+aws s3 rb s3://testsync12345/
+aws s3 rb s3://testsync12345/ --force
+
+#criar bucket
+aws s3 mb s3://buckettodelete1234/
+aws s3 rb s3://buckettodelete1234/
+
+cd %userprofile%
+
+#criar um novo profile
+aws configure --fernando2
+#apenas para mostrar o outro profile
+aws s3 ls --profile fernando2
+
+#configurar
+aws_access_key_id = AKIAVF6XVFBSDXI22BVI
+aws_secret_access_key = 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
+sa-east-1
+type credentials

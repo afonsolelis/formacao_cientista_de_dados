@@ -1,0 +1,118 @@
+[
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "investor",
+				"type": "address"
+			}
+		],
+		"name": "equity_in_usd",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "total_hadcoins_bought",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "investor",
+				"type": "address"
+			},
+			{
+				"name": "usd_invested",
+				"type": "uint256"
+			}
+		],
+		"name": "buy_hadcoins",
+		"outputs": [],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "nonpayable"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "usd_to_hadcoins",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "investor",
+				"type": "address"
+			}
+		],
+		"name": "equity_in_hadcoins",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "max_hadcoins",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "view"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "investor",
+				"type": "address"
+			},
+			{
+				"name": "hadcoins_sold",
+				"type": "uint256"
+			}
+		],
+		"name": "sell_hadcoins",
+		"outputs": [],
+		"payable": false,
+		"type": "function",
+		"stateMutability": "nonpayable"
+	}
+]

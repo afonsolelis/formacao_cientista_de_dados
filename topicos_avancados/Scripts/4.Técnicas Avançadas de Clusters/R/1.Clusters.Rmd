@@ -1,0 +1,62 @@
+---
+Formação Cientista de Dados II - Prof. Fernando Amaral
+Clusters: Técnicas Avançadas
+---
+```{r}
+#install.packages("factoextra")
+#install.packages("cluster")
+#install.packages("NbClust")
+#install.packages("fpc")
+#install.packages("NbClust")
+#install.packages("clValid")
+library(factoextra)
+library(cluster)
+library(NbClust)
+library(fpc)
+library(NbClust)
+library(clValid)
+```
+
+```{r}
+#dados para o primeiro cluster
+iris_1 = iris[1:4]
+iris_1  
+```
+
+```{r}
+#dados para segundo cluster
+set.seed(456)
+iris_2 = data.frame("col1" = sample(1:100,150,replace = T),
+"col2"  = sample(1:100,150,replace = T) ,
+"col3" = sample(1:100,150,replace = T), 
+"col4" = sample(1:100,150,replace = T))
+iris_2
+```
+Produzimos e visualizamos clusters
+```{r}
+#cluster1
+cluster = kmeans(iris_1,centers=3)
+g1 = fviz_cluster(cluster, data=iris_1, ellipse.type = "convex", ggtheme = theme_bw(),
+                  main="Iris 1")
+plot(g1)
+```
+
+```{r}
+#cluster2
+cluster = kmeans(iris_2,centers=3)
+g1 = fviz_cluster(cluster, data=iris_2, ellipse.type = "convex", ggtheme = theme_bw(),
+                  main="Iris 2")
+plot(g1)
+```
+1 - De fato existem Clusters nos dados?
+são agrupáveis?
+```{r}
+#Tendência através de  Hopkins' statistic
+# valor entre zero e 1. Esperamos proximidade com 1
+#n é o número de pontos selecionado dos dados
+get_clust_tendency(iris_1, n=50)
+get_clust_tendency(iris_2, n=50)
+#gráfico de dissimilaridade ordenado - ODI
+#vermelhor similaridade, azul baixa similaridade
+```
+

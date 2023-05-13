@@ -1,0 +1,61 @@
+---
+Formação Cientista de Dados II - Prof. Fernando Amaral
+Métricas
+---
+
+```{r}
+#install.packages('caret')
+#install.packages('e1071')
+#install.packages('ROCit')
+#install.packages('Metrics')
+library(caret)
+library(e1071)
+library(ROCit)
+library(Metrics)
+```
+
+
+```{r}
+credito = read.csv('credit3.csv', sep=';')
+#transforma classe em fator
+credito$class = as.factor(credito$class)
+head(credito)
+```
+Separa dados de treino e teste
+```{r}
+#removemos o atributo id
+credito = credito[,-1]
+set.seed(1234)
+amostra = sample(2,1000,replace=T, prob=c(0.7,0.3))
+creditotreino = credito[amostra==1,]
+creditoteste = credito[amostra==2,]
+```
+Gera o modelo
+```{r}
+modelo = svm(class ~ .,data=creditotreino, ntree=100,importance=T)
+modelo
+```
+Previsão
+```{r}
+previsao = predict(modelo,creditoteste)
+previsao
+```
+
+
+```{r}
+#várias métricas podem ser visualizadas com confusionmatrix
+resultado =  caret::confusionMatrix( previsao, creditoteste$class,positive="1", mode="everything")
+resultado
+```
+
+```{r}
+objetoroc = 
+  rocit(as.numeric(levels(previsao))[previsao],as.numeric(levels(creditoteste$class))[creditoteste$class])
+plot(objetoroc)
+```
+Avaliação de Performance
+```{r}
+#area sobre a curva, pacote metrics
+Metrics::auc(previsao,creditoteste$class)
+```
+

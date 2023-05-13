@@ -1,0 +1,92 @@
+sudo apt-get install unzip
+mkdir nosql
+cd nosql
+wget https://www.datascientist.com.br/engdados/mongo.zip
+unzip mongo.zip
+dir
+cat "algum arquivo"
+chmod u+x mongo.sh
+./mongo.sh
+
+#Inicia Shell
+mongosh
+
+#mostra banco atual
+db
+#mostra bancos existentes
+show dbs
+
+#cria um banco de dados
+#só será persistido depois de incluir documentos em uma coleção
+use dbvendas;
+
+
+#Insere um único cliente
+db.clientes.insertOne({nome:"José",sobrenome:"da Silva", idade:38})
+
+#Insere multiplos documentos
+db.clientes.insertMany([{nome:"Pedro",sobrenome:"Rocha", idade:26},
+{nome:"Maria",sobrenome:"da Silva", idade:37},
+{nome:"Lucas",sobrenome:"Rocha", idade:12}])
+
+#Encontra todos
+db.clientes.find()
+
+#Retorna apenas o primeiro
+db.clientes.findOne()
+#ler documento especifico
+
+db.clientes.find({nome:"Pedro"})
+
+#cliente com sobrenome rocha e idade menor ou igual a 12
+db.clientes.find({sobrenome:"Rocha",idade: {$lte: 12}})
+
+#sobrenome rocha ou maria
+db.clientes.find({$or:[{sobrenome:"Rocha"},{nome: "Maria"}]})
+
+#projeção, sem id
+db.clientes.find({sobrenome : "Rocha"},{_id: 0})
+
+#sem nome e sobrenome
+db.clientes.find({sobrenome : "Rocha"},{sobrenome: 0, idade: 0})
+
+#só o nome
+db.clientes.find({sobrenome : "Rocha"},{nome: 1})
+
+#limite de resultados
+db.clientes.find().limit(2)
+#ordenar crescente
+db.clientes.find().sort({nome:1})
+#ordenar decrescente
+db.clientes.find().sort({nome:-1})
+
+#atualizar cliente
+db.clientes.find({nome:"Pedro"})
+db.clientes.updateOne({nome:"Pedro"},{$set:{idade:29}})
+
+db.clientes.deleteOne({nome:"Pedro"})
+
+#excluir coleção
+db.clientes.drop()
+#testa a exclusão
+db.clientes.drop()
+
+#importar dados
+mongoimport --db dbposts --legacy  --collection posts --file posts.json
+
+#Inicia Shell
+mongosh
+
+#mostra banco atual
+db
+#mostra bancos existentes
+show dbs
+
+#banco de dados
+use dbposts;
+
+#collections
+show collections
+
+#show data
+db.dbposts.find().pretty()

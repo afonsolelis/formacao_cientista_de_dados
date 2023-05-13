@@ -1,0 +1,35 @@
+#mudar para usuario postres
+sudo su - postgres
+
+#mostrar diretorio
+pwd
+/var/lib/postgresql
+
+#criar diretorio
+mkdir dimensional
+cd dimensional
+
+#baixar arquivo
+wget https://www.datascientist.com.br/engdados/dimensional.zip
+
+unzip dimensional.zip
+dir
+cat 8.CreateTable.sql
+
+#logar no postgres
+psql
+
+#mudar para ed
+\c ed;
+
+#iniciar a execução dos scripts 1 até 6
+\i /var/lib/postgresql/dimensional/8.CreateTable.sql
+\i /var/lib/postgresql/dimensional/9.InsertDimensaoTempo.sql
+
+#script interativo
+
+#desnormalização
+
+#kpi
+
+

@@ -1,0 +1,71 @@
+---
+Formação Cientista de Dados II - Feature Effects
+Prof. Fernando Amaral
+---
+
+```{r}
+#pacotes
+#install.packages("iml")
+#install.packages("partykit")
+#install.packages("patchwork")
+#install.packages("randomForest")
+library(iml)
+library(randomForest)
+library(partykit)
+library(patchwork)
+```
+
+```{r}
+#carrega arquivo
+carros = read.csv('carros.csv', sep=";", encoding = "UTF-8")
+head(carros)
+```
+
+
+```{r}
+#criamos modelo randomForest
+modelo = randomForest(HP ~ ., data = carros, ntree = 100)
+#previsor, modelo, dados, e dependente
+previsor = Predictor$new(modelo,  carros[,-11]   , y = carros$HP  )
+```
+
+
+```{r}
+#Accumulated Local Effects
+#cilindors
+ALE = FeatureEffect$new(previsor, feature = "Cilindros", method = "ale")
+ALE$plot()
+#consumo
+ALE$set.feature("Consumo")
+ALE$plot()
+```
+
+
+```{r}
+#Individual Conditional Expectation (ICE)
+ICE = FeatureEffect$new(previsor, feature = "Cilindros", method = "ice")
+ICE$plot()
+```
+
+
+```{r}
+#Partial Dependence Plots (PDP)
+PDP = FeatureEffect$new(previsor, feature = "Cilindros", method = "pdp")
+PDP$plot()
+```
+
+
+```{r}
+#Todos os atributos no mesmo gráficos
+#ice
+ALE = FeatureEffects$new(previsor, method = "ale")
+plot(ALE)
+
+ICE = FeatureEffects$new(previsor, method = "ice")
+plot(ICE)
+
+PDP = FeatureEffects$new(previsor, method = "pdp")
+plot(PDP)
+
+
+```

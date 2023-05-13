@@ -1,0 +1,10 @@
+CreditScore;Geography;Gender;Age;Tenure;Balance;NumOfProducts;HasCrCard;IsActiveMember;EstimatedSalary
+571;France;Male;44;9;0;2;0;0;3843335
+585;Germany;Male;36;5;14605097;2;0;0;8642457
+738;Germany;Male;58;2;13374544;4;1;0;2837386
+630;Spain;Male;35;1;0;2;0;0;18682622
+794;Spain;Female;30;1;15497054;1;0;1;15676845
+567;Spain;Male;40;8;2864964;1;1;1;9514062
+709;France;Female;36;7;0;1;0;1;4208558
+772;Germany;Male;42;3;7507531;2;1;0;9288852
+792;France;Female;28;4;13014279;1;1;0;3819078

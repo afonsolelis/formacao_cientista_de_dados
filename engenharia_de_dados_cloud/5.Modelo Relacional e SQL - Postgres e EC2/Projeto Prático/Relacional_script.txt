@@ -1,0 +1,58 @@
+#intalar unzip
+sudo apt-get install unzip
+
+#instalar postgres
+#criar config do repo
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+#importar chave
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+#atualizar pacotes
+sudo apt-get update
+#Instala última versão do postgre
+sudo apt-get -y install postgresql
+
+#mudar para usuario postres
+sudo su - postgres
+
+#mostrar diretorio
+pwd
+
+#criar diretorio
+mkdir relacional
+cd relacional
+
+#baixar arquivo
+wget https://www.datascientist.com.br/engdados/relacional.zip
+unzip relacional.zip
+dir
+cat 1.CreateTable.sql
+
+#logar no postgres
+psql
+
+#criar banco de dados
+create database ed;
+
+#listar banco de dados
+\list
+
+#mudar para ed
+\c ed;
+
+#iniciar a execução dos scripts 1 até 6
+\i /var/lib/postgresql/relacional/1.CreateTable.sql
+\i /var/lib/postgresql/relacional/2.InsertClientes.sql
+\i /var/lib/postgresql/relacional/3.InsertIntoProdutos.sql
+\i /var/lib/postgresql/relacional/4.InsertIntoVendedores.sql
+\i /var/lib/postgresql/relacional/5.InsertIntoVendas.sql
+\i /var/lib/postgresql/relacional/6.InsertItensVenda.sql
+
+#inicar a exeução do script interativo
+#este script não deve ser carregado, mas rodado passo a passo
+#7.InterativoSQL.sql
+
+#listar tabelas
+\dt
+
+#sair
+\q

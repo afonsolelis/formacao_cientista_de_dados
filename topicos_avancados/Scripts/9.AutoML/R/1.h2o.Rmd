@@ -1,0 +1,87 @@
+---
+Formação Cientista de Dados II - Prof. Fernando Amaral
+AutoML
+---
+
+```{r}
+#install.packages("h2o")
+library("h2o")
+```
+
+
+```{r}
+h2o.init()
+```
+
+
+```{r}
+#Importa dados Churn_treino.csv  e Churn_prever.csv
+imp = read.csv("Churn_treino.csv", sep = ";")
+imp
+```
+
+
+```{r}
+#Pega o nome da classe - ultima coluna
+y = colnames(imp[length(imp)])
+y
+#Transforma para objeto do h20
+dados = as.h2o(imp)
+```
+
+
+```{r}
+#Divide em treino e teste
+dados = h2o.splitFrame(data=dados, ratios=0.7)
+treino = dados[[1]]
+teste = dados[[2]]
+
+```
+
+
+```{r}
+#Transforma a variável dependente em fator
+treino[,y] = as.factor(treino[,y])
+teste[,y] = as.factor(teste[,y])
+```
+
+
+```{r}
+#primeiro modelo, auto ML
+#Busca o modelo por 180 segundos, podemos em vez disso definir max_models
+modelo_auto = h2o.automl(x = colnames(treino[1:(length(imp)-1)]), 
+                         y = y,training_frame = treino, max_runtime_secs = 180,sort_metric = 'AUC')
+
+```
+
+
+```{r}
+#modelo random forest
+modelo_floresta =   h2o.randomForest(x = colnames(treino[1:(length(imp)-1)]),
+                                     y = y,training_frame = treino, nfolds = 5)
+```
+
+
+```{r}
+#performance floresta
+h2o.performance(modelo_floresta, teste)
+```
+
+
+```{r}
+#Ranking dos melhores auto ml
+#Area Under the ROC Curve (AUC)
+lb =as.data.frame(modelo_auto@leaderboard)
+lb
+```
+
+
+```{r}
+#Prever, usa o modelo melhor classificado
+imp = read.csv("Churn_prever.csv", sep = ";")
+imp = as.h2o(imp)
+previsao = h2o.predict(modelo_auto@leader, imp)
+previsao = as.data.frame(previsao)
+previsao
+```
+

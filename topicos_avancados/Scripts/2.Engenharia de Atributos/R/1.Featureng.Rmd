@@ -1,0 +1,126 @@
+---
+Formação Cientista de Dados II - Prof. Fernando Amaral
+Engenharia de Atributos
+---
+```{r}
+#install.packages("lubridate")
+#install.packages("mltools")
+#install.packages("data.table")
+library(lubridate)
+library(mltools)
+library(data.table)
+```
+
+```{r}
+#importa dados, string vazio como NA, string como fatores
+dados = read.csv("credito4.csv", sep = ";", na.strings="", stringsAsFactors=T, encoding = "UTF-8")
+head(dados)
+```
+Valores faltantes - NAs
+```{r}
+#valores faltantes NAs
+summary(dados[!complete.cases(dados),])
+```
+Remove NAs de SALDO ATUAL
+```{r}
+#tratar SALDO ATUAL
+summary(dados$SALDO_ATUAL)
+#ver mediana
+median(dados$SALDO_ATUAL,na.rm = T)
+#atribuir mediana a NAs
+dados[is.na(dados$SALDO_ATUAL),]$SALDO_ATUAL = median(dados$SALDO_ATUAL,na.rm = T)
+#buscar NAS em SALDO ATUAL para checar
+dados[!complete.cases(dados$SALDO_ATUAL),]
+```
+Remove NAs de Estado Civil
+```{r}
+unique(dados$ESTADOCIVIL)
+summary(dados$ESTADOCIVIL)
+#Substitui Estado Civil pela Moda
+dados[is.na(dados$ESTADOCIVIL),]$ESTADOCIVIL = "masculino solteiro" 
+#buscar NAS em SALDO ATUAL para checar
+dados[!complete.cases(dados$ESTADOCIVIL),]
+```
+Outliers
+```{r}
+#outliers, criando um parametro com desvio padrão
+desv = sd(dados$SALDO_ATUAL, na.rm = T)
+desv
+#verifica se existe pelo parametro
+dados[dados$SALDO_ATUAL >= 2 *desv  , ]$SALDO_ATUAL
+#atualizamos todos para mediana
+median(dados$SALDO_ATUAL)
+dados[dados$SALDO_ATUAL >= 2 *desv  , ]$SALDO_ATUAL = median(dados$SALDO_ATUAL)
+#checamos se sairam os outliers
+dados[dados$SALDO_ATUAL >= 2 *desv  , ]$SALDO_ATUAL
+```
+Data Binding
+```{r}
+#atribuir para categoria "outros"
+summary(dados$PROPOSITO)
+dados[dados$PROPOSITO == 'Eletrodomésticos'  , ]$PROPOSITO = 'outros'
+dados[dados$PROPOSITO == 'mobilia/equipamento'  , ]$PROPOSITO = 'outros'
+dados[dados$PROPOSITO == 'educação'  , ]$PROPOSITO = 'outros'
+#remover levels não utilizados
+dados$PROPOSITO =   factor(dados$PROPOSITO)
+summary(dados$PROPOSITO)
+```
+Geração de Atributos com Data
+```{r}
+class(dados$DATA)
+head(dados$DATA)
+```
+Tratamento
+```{r}
+#atribui como data
+dados$DATA = as.Date(dmy(dados$DATA))
+head(dados$DATA)
+class(dados$DATA)
+#extrai ano, mes e dia da semana
+dados$ANO = format(dados$DATA, "%Y")
+dados$MES = format(dados$DATA, "%m")
+dados$DIASEMANA = weekdays(dados$DATA)
+head(dados$DIASEMANA)
+```
+Label encoder estado civil, proposito e dia semana
+```{r}
+#Estado Civil
+unique(dados$ESTADOCIVIL)
+dados$ESTADOCIVIL = as.numeric(dados$ESTADOCIVIL)
+#Proposito
+unique(dados$PROPOSITO)
+dados$PROPOSITO = as.numeric(dados$PROPOSITO)
+#Dia da Semana
+dados$DIASEMANA = as.factor(dados$DIASEMANA)
+unique(dados$DIASEMANA)
+dados$DIASEMANA = as.numeric(dados$DIASEMANA)
+head(dados)
+```
+One hot encoding OUTROSPLANOSPGTO
+```{r}
+dados_temp  = one_hot(as.data.table( dados$OUTROSPLANOSPGTO))
+dados_temp
+dados = cbind(dados, dados_temp)
+head(dados)
+```
+Normaliza dados das primeiras colunas
+```{r}
+p = as.data.frame(scale(dados[,1:3]))
+colnames(p) = c("SALDO_ATUAL_P","RESIDENCIADESDE_P","IDADE_P")
+head(p)
+```
+Adicionamos ao Data Frame
+```{r}
+dados = cbind(dados, p)
+head(dados)
+```
+Removemos colunas
+```{r}
+#SALDO_ATUAL,RESIDENCIADESDE,IDADE: padronizados
+#OUTROSPLANOSPGTO - one hot
+#Data extraimos - características
+#V1_banco - dummy variable trap
+df2 = dados[!names(dados) %in% c('SALDO_ATUAL', 'RESIDENCIADESDE','IDADE','OUTROSPLANOSPGTO','DATA', 'V1_banco')]
+head(df2)
+```
+

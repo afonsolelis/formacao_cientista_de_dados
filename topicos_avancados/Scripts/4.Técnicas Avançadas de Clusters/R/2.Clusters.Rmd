@@ -1,0 +1,94 @@
+---
+Formação Cientista de Dados II - Prof. Fernando Amaral
+Clusters: Técnicas Avançadas
+---
+
+```{r}
+#install.packages("factoextra")
+#install.packages("cluster")
+#install.packages("NbClust")
+#install.packages("fpc")
+#install.packages("NbClust")
+#install.packages("clValid")
+library(factoextra)
+library(cluster)
+library(NbClust)
+library(fpc)
+library(NbClust)
+library(clValid)
+```
+
+
+```{r}
+#dados para o primeiro cluster
+iris_1 = iris[1:4]
+iris_1  
+```
+
+
+```{r}
+#dados para segundo cluster
+set.seed(456)
+iris_2 = data.frame("col1" = sample(1:100,150,replace = T),
+"col2"  = sample(1:100,150,replace = T) ,
+"col3" = sample(1:100,150,replace = T), 
+"col4" = sample(1:100,150,replace = T))
+iris_2
+```
+2 - número ideal de clusters
+```{r}
+#elbow : soma interna dos quadrados - within-cluster sum of square wss
+#adicionar um cluster não melhora o wss
+fviz_nbclust(iris_1, kmeans, method = "wss") 
+  
+# Average silhouette
+# O melhor é o que maximiza a silueta média entre os valores possíveis
+fviz_nbclust(iris_1, kmeans, method = "silhouette")
+
+#gap statistics - melhor será o maximiza a estatística Gap
+# K.max maximo de clusters a considerar
+# b integer, number of Monte Carlo (“bootstrap”) samples.
+gap = clusGap(iris_1, FUN = kmeans, K.max = 6)
+
+fviz_gap_stat(gap)
+```
+
+```{r}
+# 30 indíces
+#min.nc e max.nc minimo e máximo
+NbClust(iris_1, diss = NULL, distance = "euclidean", min.nc = 2, max.nc = 6, method ="kmeans")
+#gráficos
+#Hubert index busca-se um "joelho" que representa aumento na medida
+#indice D busca-se um "joelho" que representa aumento no valor da medida
+```
+3- Foram produzidos bons clusters?
+```{r}
+#dunn index
+#testamos kmeans com 4 clusters
+x  = kmeans(iris_1,centers=4)
+dunn4 = cluster.stats(d = dist(iris_1), x$cluster)
+dunn4$dunn2
+
+#testamos kmeans com 3 clusters
+x  = kmeans(iris_1,centers=3)
+dunn3 = cluster.stats(d = dist(iris_1), x$cluster)
+dunn3$dunn2
+
+
+#testamos kmeans com 2 clusters
+x  = kmeans(iris_1,centers=2)
+dunn2 = cluster.stats(d = dist(iris_1), x$cluster)
+dunn2$dunn2
+
+#ver todas as estatísticas
+dunn4
+```
+4 - usamos o melhor agrupador?
+```{r}
+# Compute clValid
+agrupadores = clValid(iris_1, nClust = 2:6, 
+                  clMethods = c("hierarchical","kmeans","pam"), validation = "internal")
+# Summary
+summary(agrupadores)
+```
+

@@ -1,0 +1,45 @@
+---
+Formação Cientista de Dados II - Prof. Fernando Amaral
+Dados Desbalanceados
+---
+
+
+```{r}
+#install.packages("DMwR")
+library(DMwR)
+```
+
+
+```{r}
+credito = read.csv("Credit3.csv",sep = ";", stringsAsFactors = T)
+credito = credito[,-1]
+#transforma a classe em fator
+credito$class = as.factor(credito$class)
+head(credito)
+```
+
+
+```{r}
+#visualiza balanceamento
+summary(credito$class)
+```
+
+
+```{r}
+#600 minoritária e 300 majoritária, pois é baseado na diferença da minoritária
+creditonovo = SMOTE(class ~ ., credito,   perc.over = 100, perc.under = 100 )
+summary(creditonovo$class)
+```
+
+
+```{r}
+#600 minoritária e 600 majoritária, dobro da diferença da minoritaria
+creditonovo1 = SMOTE(class ~ ., credito,   perc.over = 100, perc.under = 200 )
+summary(creditonovo1$class)
+```
+
+
+```{r}
+head(creditonovo1)
+```
+

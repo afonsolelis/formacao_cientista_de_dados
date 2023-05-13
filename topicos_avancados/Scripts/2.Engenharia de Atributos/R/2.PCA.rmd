@@ -1,0 +1,69 @@
+---
+Formação Cientista de Dados II - Prof. Fernando Amaral
+PCA
+---
+
+```{r}
+#install.packages('randomForest')
+#install.packages('FactoMineR')
+library(randomForest)
+library(FactoMineR)
+```
+Parte 1 criar modelo Randoforest
+```{r}
+set.seed(2334)
+iris2 = as.data.frame(scale(iris[,-5]))
+iris2$Species = iris$Species
+iris2
+```
+Separa Dados
+```{r}
+amostra = sample(2,150,replace=T, prob=c(0.7,0.3))
+iristreino = iris2[amostra==1,]
+iristeste = iris2[amostra==2,]
+```
+Modelo e Previsão
+```{r}
+floresta = randomForest(Species ~ .,data=iristreino, ntree=100,importance=T)
+previsao = predict(floresta,iristeste)
+```
+Avaliação
+```{r}
+confusao = table(previsao,iristeste$Species)
+confusao
+taxaacerto = (confusao[1] + confusao[5] + confusao[9])   / sum(confusao)
+taxaacerto
+```
+Parte II - Reduz dimensões
+```{r}
+#ncp: número de dimensões para manter no resultado
+#já faz o scale das variáveis Por padrão
+pca = PCA(iris[,-5], ncp=3, graph = F)
+summary(pca)
+```
+Cria Data Frame com os componentes 1,2 e 3
+```{r}
+irispca = data.frame(pca$ind$coord[,1],pca$ind$coord[,2],pca$ind$coord[,3],
+                iris$Species)
+irispca
+```
+Separa dados
+```{r}
+set.seed(2334)
+amostrapca = sample(2,150,replace=T, prob=c(0.7,0.3))
+irispcatreino = irispca[amostrapca==1,]
+irispcateste = irispca[amostrapca==2,]
+```
+Modelo e Previsão
+```{r}
+florestapca = randomForest(iris.Species ~ .,data=irispcatreino, ntree=100,importance=T)
+previsaopca = predict(florestapca,irispcateste)
+```
+Avaliação
+```{r}
+confusaopca = table(previsaopca,irispcateste$iris.Species)
+confusaopca
+taxaacertopca = (confusaopca[1] + confusaopca[5] + confusaopca[9])   / sum(confusaopca)
+taxaacertopca
+```
+

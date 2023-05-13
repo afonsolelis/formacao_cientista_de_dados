@@ -1,0 +1,272 @@
+#AULA 1
+#########INSTALAR 
+
+sudo snap install redis
+sudo apt-get update
+sudo apt install redis-tools
+
+######## AULA 2
+redis-cli
+
+#trocar banco de dados
+select 0
+select 1
+select 0
+
+
+###strings
+#inclui - CHAVE VALOR
+SET 1 "Engenharia de Dados"
+
+#retorna
+GET 1
+
+#inclui várias chaves
+MSET 1040 ANALISTA 1050 GERENTE 1060 TESTADOR
+
+#testa existencia
+EXISTS 1
+EXISTS 455
+
+#TIPO DE CHAVE - O TIPO AQUI SEMPRE SERÁ STRING MESMO SE INSERIR UM NÚMERO
+TYPE 1
+
+#exclui pela chave
+DEL 1
+
+#tenta localizar
+EXISTS 1
+
+#EXPIRAÇÃO EX SEGUNDOS NX SÓ FUNCIONA SE A CHAVE NÃO EXISTE
+SET 1 "ENGENHARIA DE DADOS" EX 60 NX
+
+#expiração posterior - SEGUNDOS
+SET 1 "ENGENHARIA DE DADOS"
+EXPIRE 1 5
+
+#testar até sumir
+EXISTIS 1
+EXISTIS 1
+
+#MILESEGUNDOS
+SET 1 "ENGENHARIA DE DADOS"
+PEXPIRE 1 5000
+
+#testar até sumir
+EXISTIS 1
+EXISTIS 1
+
+#expiração posterior - SEGUNDOS
+SET 1 "ENGENHARIA DE DADOS"
+EXPIRE 1 50
+#retonar tempo para expirar MILESEGUNDOS
+PTTL 1
+#SEGUNDOS
+TTL 1
+#remove expiração
+PERSIST 1
+
+#get e getrange
+SET 1020 "ENGENHEIRO DE DADOS"
+GET 1020
+#ENTRE AS POSIÇÃO 0 E 9
+GETRANGE 1020 0 9
+
+#atualiza e retorna o valor antigo
+GET 1040
+#ATUALIZA
+GETSET 1040 "ANALISTA DE DADOS"
+#CONFIRMA
+GET 1040
+
+#retorna várias chaves
+MGET 1040 1050 1060
+#tamanho do campo valor
+STRLEN 1040
+
+######aula 3 hash   Conjunto de campos/valores, associados a uma chave
+#hash - chave + {campo valor} { camp valor}
+HMSET CADASTRO NOME JOSE PROFISSAO ENGENHEIRO CIDADE "SANTA MARIA"
+
+#retorna todos chave + valor
+HGETALL CADASTRO
+
+#exclui CAMPO e valor pelo CHAVE A NOME DO CAMPO
+HDEL CADASTRO CIDADE
+
+#retorna todos
+HGETALL CADASTRO
+
+#retorna valor PELO NOME DO CAMPO
+HMGET CADASTRO NOME PROFISSAO
+
+#retorna todos os VALORES - sem campo
+HVALS CADASTRO
+
+#todo o hash
+HGETALL CADASTRO
+
+#verifica existencia pelo campo
+HEXISTS CADASTRO NOME
+HEXISTS CADASTRO NOMES
+
+#retorna número de campos
+HLEN CADASTRO
+
+#retonar lista de campos
+HKEYS CADASTRO
+
+#tipo
+TYPE CADASTRO
+
+####aula 4
+##########listas  - Lista de strings com chave única que pode ser inseridas separadamente
+#inclusão no inicio da lista
+LPUSH 4545 SQLSERVER ORACLE POSTGRES MYSQL
+
+#TIPO
+TYPE 4545
+
+#retorna intervalo
+LRANGE 4545 0 3
+
+#no fim da lista
+RPUSH 4545 DB2
+
+#retorna intervalo
+LRANGE 4545 0 4
+
+#insere depois de valor
+LINSERT 4545 AFTER ORACLE FIREBIRD
+
+#retorna intervalo
+LRANGE 4545 0 5
+
+#insere antes de valor
+LINSERT 4545 BEFORE FIREBIRD SQLITE
+
+#retorna intervalo
+LRANGE 4545 0 6
+
+#atualiza
+LSET 4545 1 POSTGRESQL
+
+#retorna pelo indíce
+LINDEX 4545 1
+
+#comprimento
+LLEN 4545
+
+#remove pelo inicio
+LRANGE 4545 0 6
+LPOP 4545
+LRANGE 4545 0 5
+
+#remove pelo fim
+RPOP 4545
+#COLOCAMOS 1 A MAIS NO INTERVALO PARA VER QUE FOI REMOVIDO
+LRANGE 4545 0 5
+
+#########aula 5
+#########################
+#sets  -Coleção não ordenada, não repetida
+SADD 13 HADOOP SPARK HIVE PIG
+SADD 13 FLUME OOZIE SOLR
+#RETORNA ZERO
+SADD 13 FLUME
+
+#recupera valores
+SMEMBERS 13
+#Número de Membros
+SCARD 13
+
+#Verifica se um Valor é Membro
+SISMEMBER 13 HADOOP
+
+#remove
+SREM 13 OOZIE SPARK
+
+#recupera valores
+SMEMBERS 13
+
+#adiciona outro set
+SADD 14 HIVE HADOOP SPARK
+
+#diferença  da flume, pig, solr
+SDIFF 13 14
+
+#diferença da spark
+SDIFF 14 13
+
+#interseção da hive hadoop
+#NÃO MUDA CONF ordem
+SINTER 13 14
+SINTER 14 13
+
+
+#########aula 6 ZSET
+######################### cont. sets aula 6
+#ordenados baseados em score - não repetido
+ZADD 35 0 NOSQL
+ZADD 35 5 RELACIONAL
+ZADD 35 4 DIMENSIONAL
+
+#Número de Elementos
+ZCARD 35
+
+#Índice de um membro
+ZRANK 35 DIMENSIONAL
+
+#Conta membros com scores entre... retorna 3
+ZCOUNT 35 0 5
+
+#Retorna o score de um membro..retornar 5
+ZSCORE 35 RELACIONAL
+
+#Retorna Membros pelo Índice
+ZRANGE 35 0 2
+ZRANGE 35 0 2 WITHSCORES
+
+#remove
+ZREM 35 DIMENSIONAL
+redisZRem(key, member)
+
+
+########aula 7
+#transações
+#MULTI:  Marca o inicio das transações
+#EXEC: Executa todos os comandos depois de MULTI
+#DISCARD: Descarta todos os comandos depois de MULTI
+
+MULTI
+SET 145 "REDIS NOSQL"
+SET 146 "MONGODB NOSQL"
+EXEC
+EXISTS 145
+
+MULTI
+SET 1213 "REDIS NOSQL"
+SET 1214 "MONGODB NOSQL"
+DISCARD
+
+
+EXISTS 1213
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
